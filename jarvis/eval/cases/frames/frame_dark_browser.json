@@ -1,0 +1,32 @@
+{
+  "process": "chrome",
+  "app_class": "BROWSER",
+  "bounds": [
+    0,
+    0,
+    1280,
+    768
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "dpi_scale": 1.0,
+  "golden": {
+    "required_substrings": [
+      "Installation",
+      "pip install",
+      "getting"
+    ],
+    "max_fragment_phrases": [
+      {
+        "phrase": "pip install",
+        "max_fragments": 1
+      },
+      {
+        "phrase": "Installation",
+        "max_fragments": 1
+      }
+    ]
+  }
+}

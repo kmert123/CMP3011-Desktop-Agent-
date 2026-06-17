@@ -1,0 +1,6 @@
+{
+  "intent_accuracy": 80.0,
+  "rung_accuracy": 75.0,
+  "action_match_rate": 100.0,
+  "n_fixtures": 5
+}

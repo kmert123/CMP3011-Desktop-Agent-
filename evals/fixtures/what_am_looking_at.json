@@ -1,0 +1,7 @@
+{
+  "query": "what am I looking at?",
+  "screenshot_path": null,
+  "expected_intent": "VISUAL",
+  "expected_rung": "VISION",
+  "expected_action": null
+}

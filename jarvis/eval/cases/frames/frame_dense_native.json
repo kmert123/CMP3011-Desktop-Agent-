@@ -1,0 +1,34 @@
+{
+  "process": "taskmgr",
+  "app_class": "NATIVE",
+  "bounds": [
+    0,
+    0,
+    1280,
+    768
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "dpi_scale": 1.0,
+  "golden": {
+    "required_substrings": [
+      "Memory",
+      "CPU",
+      "chrome.exe",
+      "python.exe",
+      "CPU usage"
+    ],
+    "max_fragment_phrases": [
+      {
+        "phrase": "CPU usage",
+        "max_fragments": 2
+      },
+      {
+        "phrase": "chrome.exe",
+        "max_fragments": 1
+      }
+    ]
+  }
+}

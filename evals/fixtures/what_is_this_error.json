@@ -1,0 +1,8 @@
+{
+  "query": "what is this error?",
+  "screenshot_path": null,
+  "expected_intent": "TEXT",
+  "expected_rung": "UIA",
+  "expected_action": null,
+  "_known_failure": "NO_CONTEXT 'define' rule (^what\\s+is) fires before TEXT 'this_error' rule — order bug in classify.py"
+}

@@ -1,0 +1,7 @@
+{
+  "query": "thoughts on this?",
+  "screenshot_path": null,
+  "expected_intent": "TEXT",
+  "expected_rung": "UIA",
+  "expected_action": null
+}

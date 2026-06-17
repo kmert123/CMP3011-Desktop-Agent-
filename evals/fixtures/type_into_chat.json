@@ -1,0 +1,7 @@
+{
+  "query": "type this into the chat",
+  "screenshot_path": null,
+  "expected_intent": "ACTION",
+  "expected_rung": null,
+  "expected_action": {"kind": "type_input"}
+}

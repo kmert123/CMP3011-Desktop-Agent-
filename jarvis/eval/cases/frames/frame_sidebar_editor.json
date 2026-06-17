@@ -1,0 +1,31 @@
+{
+  "process": "code",
+  "app_class": "ELECTRON",
+  "bounds": [
+    0,
+    0,
+    1280,
+    768
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "dpi_scale": 1.0,
+  "golden": {
+    "required_substrings": [
+      "classify_intent",
+      "entry_rung_for"
+    ],
+    "max_fragment_phrases": [
+      {
+        "phrase": "classify_intent",
+        "max_fragments": 2
+      },
+      {
+        "phrase": "entry_rung_for",
+        "max_fragments": 1
+      }
+    ]
+  }
+}

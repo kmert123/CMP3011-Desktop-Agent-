@@ -1,0 +1,7 @@
+{
+  "query": "summarize what I'm reading",
+  "screenshot_path": null,
+  "expected_intent": "TEXT",
+  "expected_rung": "UIA",
+  "expected_action": null
+}

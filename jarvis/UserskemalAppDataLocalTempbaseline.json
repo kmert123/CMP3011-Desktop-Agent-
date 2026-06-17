@@ -1,0 +1,50 @@
+{
+  "total": 15,
+  "routing_accuracy": 0.4666666666666667,
+  "success_at_rung": 0.45454545454545453,
+  "grounding_prec": 0.0,
+  "false_success_rate": 0.0,
+  "escalation_rate": 0.0,
+  "failures": [
+    {
+      "id": "q004",
+      "query": "what does this error mean",
+      "notes": "perception mismatch; rung mismatch"
+    },
+    {
+      "id": "q005",
+      "query": "click the submit button",
+      "notes": "perception mismatch; rung mismatch; grounding miss"
+    },
+    {
+      "id": "q006",
+      "query": "what text is on screen",
+      "notes": "perception mismatch; rung mismatch"
+    },
+    {
+      "id": "q007",
+      "query": "describe the screen",
+      "notes": "perception mismatch; rung mismatch"
+    },
+    {
+      "id": "q008",
+      "query": "copy the selected text to clipboard",
+      "notes": "act mismatch"
+    },
+    {
+      "id": "q009",
+      "query": "paste into Slack",
+      "notes": "act mismatch"
+    },
+    {
+      "id": "q012",
+      "query": "click OK",
+      "notes": "perception mismatch; rung mismatch; grounding miss"
+    },
+    {
+      "id": "q014",
+      "query": "take a screenshot and describe it",
+      "notes": "perception mismatch; rung mismatch"
+    }
+  ]
+}
