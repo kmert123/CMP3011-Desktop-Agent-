@@ -12,11 +12,23 @@ Get Jarvis running in 5 minutes:
 
 ### 1. Prerequisites
 - Python 3.10+
-- Internet connection
 - Microphone
-- Google account (for Gemini API — free tier available)
+- **Ollama** — for local vision & language models (download: https://ollama.com)
+- *(Optional)* Google account for Gemini API (free tier available)
 
-### 2. Clone & Setup
+### 2. Install Ollama Models
+```bash
+# Pull the local vision model (Qwen2.5-VL 7B — screen/UI reasoning)
+ollama pull qwen2.5vl:7b
+
+# Pull the local language model (Qwen2.5 7B-instruct — text reasoning)
+ollama pull qwen2.5:7b-instruct
+
+# Keep Ollama running in the background — it serves as an HTTP server on localhost:11434
+ollama serve
+```
+
+### 3. Clone & Setup Jarvis
 ```bash
 git clone https://github.com/kmert123/CMP3011-Desktop-Agent-.git
 cd CMP3011-Desktop-Agent-
@@ -29,15 +41,17 @@ pip install -r jarvis/requirements.txt
 cp jarvis/.env.example jarvis/.env
 ```
 
-### 3. Get API Key
+### 4. (Optional) Add Gemini API Key
+For better reasoning on complex queries:
 1. Visit https://aistudio.google.com
 2. Click "Create API key"
 3. Paste into `jarvis/.env`:
    ```env
    GEMINI_API_KEY=your_key_here
    ```
+   *(Not required — works fully offline with local models)*
 
-### 4. Run
+### 5. Run
 ```bash
 python jarvis/main.py
 ```
@@ -116,20 +130,38 @@ jarvis/
 
 ---
 
+## 🧠 Model Architecture
+
+Jarvis uses a **local-first, cloud-optional** approach:
+
+| Component | Local Model | Cloud Fallback | Required |
+|-----------|-------------|---|----------|
+| **Vision** (screenshots) | Qwen2.5-VL 7B (Ollama) | Gemini 2.5 Flash | ✅ Local VLM (required) |
+| **Language** (reasoning) | Qwen2.5 7B-instruct (Ollama) | Gemini 2.5 Flash | ✅ Local LLM (required) |
+| **Transcription** | Whisper base | N/A | ✅ Required |
+
+**How it works:**
+1. Asks Gemini ONLY if:
+   - You set `GEMINI_API_KEY` in `.env`, AND
+   - The local model request fails or times out
+2. Otherwise, runs completely offline using Ollama
+3. Teacher/evaluator can test without any API key
+
+---
+
 ## ⚙️ Configuration
 
 Edit `jarvis/.env` (created from `.env.example`):
 
 ```env
-GEMINI_API_KEY=your_api_key_here
-
-# Optional:
-# VISION_BACKEND=local          # Use local models instead of Gemini
-# LLM_BACKEND=local_llm         # Use Ollama for LLM
-# OLLAMA_BASE_URL=http://localhost:11434
+# Optional — Gemini fallback only (local models work standalone)
+GEMINI_API_KEY=your_key_here
 ```
 
-All configuration constants are in `jarvis/config.py`.
+All configuration constants are in `jarvis/config.py`:
+- `VISION_MODEL = "auto"` — tries local VLM first, Gemini fallback
+- `VISION_BACKEND = "local"` — local-first vision
+- `LOCAL_LLM_MODEL = "qwen2.5:7b-instruct"` — local text reasoning
 
 ---
 
@@ -138,8 +170,9 @@ All configuration constants are in `jarvis/config.py`.
 ✅ **Voice-Activated** — Say "Jarvis" to trigger  
 ✅ **Screen-Aware** — Understands your active window  
 ✅ **Intelligent Router** — Chooses cheapest perception path (UIA → OCR → Vision)  
-✅ **Gemini 2.5 Flash** — Fast, accurate reasoning  
-✅ **Local Fallback** — Works offline with Ollama  
+✅ **Local-First** — Uses Ollama (Qwen2.5 7B) offline by default  
+✅ **Cloud-Optional** — Gemini 2.5 Flash available as fallback (if API key set)  
+✅ **No Key Required** — Full functionality without any API credentials  
 ✅ **Cross-Platform** — Windows primary, macOS supported  
 ✅ **Production-Ready** — Audited and certified  
 
@@ -184,6 +217,21 @@ See [docs/QUALITY_ASSURANCE.md](docs/QUALITY_ASSURANCE.md) for full audit detail
 
 ## 🆘 Troubleshooting
 
+### "Ollama is not running"
+```bash
+# Start Ollama in a separate terminal:
+ollama serve
+
+# Verify models are installed:
+ollama list
+# Should show: qwen2.5vl:7b and qwen2.5:7b-instruct
+```
+
+### "Connection refused on localhost:11434"
+- Ollama must be running (`ollama serve`)
+- Check: `curl http://localhost:11434/api/tags`
+- If error: restart Ollama service
+
 ### "No wake word triggers"
 ```bash
 # Check microphone permissions in OS Settings
@@ -197,13 +245,17 @@ brew install portaudio
 pip install --force-reinstall pyaudio
 ```
 
-### "Gemini API errors"
-Use local fallback:
+### "Models not downloaded"
 ```bash
-# Install Ollama: https://ollama.com
-ollama pull qwen2.5vl:7b
-# Edit jarvis/config.py: VISION_BACKEND = "local"
-python jarvis/main.py
+ollama pull qwen2.5vl:7b          # Vision model (~5 GB)
+ollama pull qwen2.5:7b-instruct   # Language model (~5 GB)
+```
+
+### "Want to use Gemini instead?"
+Edit `jarvis/config.py`:
+```python
+VISION_BACKEND = "gemini"  # Force Gemini (requires API key)
+VISION_MODEL = "gemini"    # Only Gemini, no local fallback
 ```
 
 See [docs/README.md](docs/README.md) for more troubleshooting.
