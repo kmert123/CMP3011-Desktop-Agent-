@@ -65,11 +65,12 @@ desktop.ini
 .claude/
 
 # Task & Implementation Documentation
-TASKS.md
-JARVIS_SPEC.md
-improvement*.md
-*tasks.md
-development/
-IMPLEMENTATIONS.md
-IMPROVEMENTS.md
+/TASKS.md
+/JARVIS_SPEC.md
+/improvement1tasks.md
+/improvement2tasks.md
+/improvement3-9tasks.md
+/improvement9tasks.md
+/IMPLEMENTATIONS.md
+/IMPROVEMENTS.md
 docs/development/
