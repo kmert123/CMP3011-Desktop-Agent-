@@ -63,3 +63,13 @@ desktop.ini
 
 # Claude Code
 .claude/
+
+# Task & Implementation Documentation
+TASKS.md
+JARVIS_SPEC.md
+improvement*.md
+*tasks.md
+development/
+IMPLEMENTATIONS.md
+IMPROVEMENTS.md
+docs/development/
