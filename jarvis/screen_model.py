@@ -245,6 +245,49 @@ class ScreenModel:
 
         return "\n".join(lines)
 
+    def to_full_text_block(self, max_chars: int = 4000) -> str:
+        """Return ALL visible screen text as clean readable lines — no geometry.
+
+        Unlike to_prompt_block(), this carries no roles, bboxes, or [invokable]
+        decorations and is not capped at the tight tree budget.  It is the
+        verbatim text of the screen in reading order, intended to be injected
+        into the reasoning prompt so the model can answer "what does the text on
+        my screen say?" without parsing the structured tree.
+
+        Ordering: content-region elements first (P8 salience), then the rest, so
+        browser/app chrome never buries the body text.  Within each section,
+        elements are sorted top-to-bottom then left-to-right.  Only text-bearing
+        UIA/OCR elements contribute (same source filter as full_text).  Exact
+        consecutive duplicate lines are collapsed.  Truncated to max_chars.
+        """
+        text_elems = [
+            e for e in self.elements
+            if e.text and e.text.strip() and e.source in ("uia", "ocr")
+        ]
+        if not text_elems:
+            # Fall back to the precomputed full_text when no elements qualify.
+            full = (self.full_text or "").strip()
+            return full[:max_chars]
+
+        def _reading_order(elems: list["ScreenElement"]) -> list["ScreenElement"]:
+            return sorted(elems, key=lambda e: (e.bbox[1], e.bbox[0]))
+
+        content = _reading_order([e for e in text_elems if e.in_content_region])
+        chrome = _reading_order([e for e in text_elems if not e.in_content_region])
+
+        lines: list[str] = []
+        prev: str | None = None
+        for elem in content + chrome:
+            line = elem.text.strip()
+            if line and line != prev:  # collapse exact consecutive duplicates
+                lines.append(line)
+                prev = line
+
+        block = "\n".join(lines)
+        if len(block) > max_chars:
+            block = block[:max_chars].rstrip() + "…"
+        return block
+
 
 def make_element_id(role: str, text: str, bbox: tuple[int, int, int, int]) -> str:
     """Stable 16-char hex ID derived from (role, text, bbox)."""

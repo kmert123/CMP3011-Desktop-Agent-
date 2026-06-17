@@ -496,14 +496,25 @@ def _build_local_prompt(
     if perc:
         sm = perc.screen_model
         if sm is not None:
+            # Verbatim full-text block FIRST — the clean, untruncated text of the
+            # screen so the model can answer "what does the text on my screen say?"
+            # without parsing the structured tree.
+            full_text = sm.to_full_text_block()
+            if full_text:
+                ft = (notice + "\n" + full_text) if notice else full_text
+                parts.append(
+                    "All visible text on screen (verbatim, use this to answer "
+                    f"questions about screen text):\n{ft}"
+                )
             block = sm.to_prompt_block()
             if block:
                 label = (
                     "Additional screen context"
                     if (focus and focus.is_useful())
-                    else "Screen context (use together with your own knowledge to answer)"
+                    else "Screen structure (elements, roles, positions — secondary)"
                 )
-                if notice:
+                # notice already attached to the full-text block above when present.
+                if notice and not full_text:
                     block = notice + "\n" + block
                 parts.append(f"{label}:\n{block}")
         elif perc.text:
@@ -662,14 +673,25 @@ def _build_initial_contents(
     if perc:
         sm = perc.screen_model
         if sm is not None:
+            # Verbatim full-text block FIRST — the clean, untruncated text of the
+            # screen so the model can answer "what does the text on my screen say?"
+            # without parsing the structured tree.
+            full_text = sm.to_full_text_block()
+            if full_text:
+                ft = (notice + "\n" + full_text) if notice else full_text
+                text_parts.append(
+                    "All visible text on screen (verbatim, use this to answer "
+                    f"questions about screen text):\n{ft}"
+                )
             block = sm.to_prompt_block()
             if block:
                 label = (
                     "Additional screen context"
                     if (focus and focus.is_useful())
-                    else "Screen context (use together with your own knowledge to answer)"
+                    else "Screen structure (elements, roles, positions — secondary)"
                 )
-                if notice:
+                # notice already attached to the full-text block above when present.
+                if notice and not full_text:
                     block = notice + "\n" + block
                 text_parts.append(f"{label}:\n{block}")
         elif perc.text:

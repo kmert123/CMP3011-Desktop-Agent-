@@ -206,8 +206,17 @@ def _text_sim(a: str, b: str) -> float:
 
 
 def _merge_pair(primary: ScreenElement, secondary: ScreenElement) -> ScreenElement:
-    """Merge secondary into primary (primary wins on role/handle/text)."""
-    text = primary.text if primary.text else secondary.text
+    """Merge secondary into primary (primary wins on role/handle/confidence).
+
+    Text selection keeps the *longer* of the two non-empty texts so that a fuller
+    OCR line is not discarded when a partial/abbreviated UIA accessibility name
+    happens to win the cluster.  Grounding is unaffected — it keys on
+    bbox/role/confidence, not the rendered text.
+    """
+    if primary.text and secondary.text:
+        text = primary.text if len(primary.text) >= len(secondary.text) else secondary.text
+    else:
+        text = primary.text or secondary.text
     conf = max(primary.confidence, secondary.confidence)
     cal = max(primary.calibrated_confidence, secondary.calibrated_confidence)
     return replace(primary, text=text, confidence=conf, calibrated_confidence=cal)

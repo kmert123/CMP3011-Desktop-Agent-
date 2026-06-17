@@ -109,6 +109,11 @@ _RULES: list[tuple[Act, Perception, str, str]] = [
     (Act.ANSWER, Perception.STRUCTURE, "this_text",   r"\bthis\s+(text|article|document|doc|page)\b"),
     (Act.ANSWER, Perception.STRUCTURE, "error_msg",   r"\b(error\s+message|stack\s+trace|exception)\b"),
     (Act.ANSWER, Perception.STRUCTURE, "this_error",  r"\bwhat\s+(does\s+this\s+error|is\s+this\s+error)\b"),
+    # "what does the text on my screen say", "read the screen text", "the text on my screen" —
+    # explicit requests to read ALL visible text. Routes to STRUCTURE (fusion runs OCR) and
+    # skips the timeout-prone LLM router so a full-text read is deterministic.
+    (Act.ANSWER, Perception.STRUCTURE, "screen_text",
+     r"\btext\s+(?:on|in)\b.*\bscreen\b|\bread\b.*\b(?:screen|text)\b|\bwhat\s+does\s+the\s+text\b"),
 ]
 
 _COMPILED = [
@@ -121,6 +126,7 @@ _COMPILED = [
 _HIGH_CONF_RULES: frozenset[str] = frozenset({
     "open_launch", "close_kill", "click_press", "type_input", "set_clipboard",
     "on_screen", "looking_at", "what_see",
+    "screen_text",
 })
 
 # ---------------------------------------------------------------------------
@@ -224,6 +230,11 @@ if __name__ == "__main__":
         "something completely random",
         "describe this chart",
         "what's on screen?",
+        # screen_text rule
+        "what do you know about the text on my screen?",
+        "what does the text on my screen say",
+        "read the screen text",
+        "read me the text on the screen",
         # Deictic / referring-expression tests
         "more info on this",
         "tell me about this",
