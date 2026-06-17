@@ -157,6 +157,7 @@ class SessionContext:
         roi_crop: "np.ndarray | None" = None,
         hwnd: int = 0,
         app_class: str | None = None,
+        screen_model: "Any | None" = None,
     ) -> None:
         """Store a screen read result.
 
@@ -164,6 +165,10 @@ class SessionContext:
         roi_crop, if provided, is saved for density comparison on the next freshness check.
         hwnd / app_class are stored so screen_read_fresh can apply per-class TTL
         and content-key checks for browser/Electron targets.
+        screen_model is the ScreenModel that produced *text*; storing it here keeps the
+        cache self-contained so a cache hit can restore the full structured context
+        (full text, element tree, escalation eligibility) instead of degrading to a
+        truncated text-only prompt.
         """
         content_title = _get_window_title(hwnd)
         content_url = (
@@ -182,6 +187,7 @@ class SessionContext:
             "app_class": app_class,
             "content_title": content_title,
             "content_url": content_url,
+            "screen_model": screen_model,
         }
 
     def invalidate_screen_cache(self) -> None:

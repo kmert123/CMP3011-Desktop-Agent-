@@ -294,6 +294,10 @@ def route(query: str, session: SessionContext, frame=None, trace=None) -> RouteR
                 window_sig=window_sig,
                 source=sr["source"],
                 ok=True,
+                # Restore the ScreenModel so a cache hit delivers the same rich
+                # context as a fresh read (full text block, element tree,
+                # escalation eligibility) instead of a truncated text-only prompt.
+                screen_model=sr.get("screen_model"),
             )
             used_cache = True
         else:
@@ -333,6 +337,7 @@ def route(query: str, session: SessionContext, frame=None, trace=None) -> RouteR
                     current_hash, roi_crop=current_crop,
                     hwnd=target.hwnd if target else 0,
                     app_class=app_class.value if app_class is not None else None,
+                    screen_model=perception.screen_model,
                 )
             # Update WorldState with the freshly-perceived ScreenModel.
             if perception.screen_model is not None:
@@ -400,6 +405,7 @@ def escalate_route(
             current_hash, roi_crop=current_crop,
             hwnd=target.hwnd if target else 0,
             app_class=app_class.value if app_class is not None else None,
+            screen_model=perception.screen_model,
         )
     if perception.screen_model is not None:
         session.world_state.update_active(perception.screen_model)
